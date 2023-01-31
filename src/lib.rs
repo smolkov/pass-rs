@@ -1,3 +1,7 @@
+//! # pass-rs 
+//!
+//! `pass_rs` password storage
+
 /// Adds one to the number given.
 ///
 /// # Examples
