@@ -2,6 +2,9 @@
 //!
 //! `pass_rs` password storage
 
+
+pub mod cli;
+
 /// Adds one to the number given.
 ///
 /// # Examples
