@@ -76,6 +76,9 @@ pub enum Command {
          /// Recursive to rm directory
          #[arg(short, long, default_value_t = false)]
          recursive: bool, 
+         /// Password path to remove
+         pass_name: PathBuf
+         
     },
     /// Renames or moves old-path to new-path, optionally forcefully, selectively reencrypting.
     Mv {
@@ -83,15 +86,15 @@ pub enum Command {
        #[arg(short, long, default_value_t = false)]
        force: bool, 
        /// Old path
-       old_path: PathBuf,
+       src: PathBuf,
        /// Moved to new path
-       new_path: PathBuf
+       dest: PathBuf
     },
     Cp {
        /// Source path
-       src_path: PathBuf,
+       src: PathBuf,
        /// Destination path
-       dest_path: PathBuf 
+       dest: PathBuf 
     },
     /// If the password store is a git repository, execute a git command specified by git-command-args.
     Git{

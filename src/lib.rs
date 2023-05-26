@@ -2,7 +2,7 @@
 //!
 //! `pass_rs` password storage
 
-
+pub mod command;
 pub mod cli;
 
 /// Adds one to the number given.
