@@ -1,7 +1,19 @@
 use anyhow::Result;
 
+use clap::Parser;
 
-pub fn run(_clip: bool,_password: Option<String>)-> Result<()>{
+#[derive(Debug,Parser)]
+pub struct Cli {
+    /// Put on the clipboard, it will be cleared in 45 seconds.
+    #[arg(short, long, default_value_t = false)]
+    clip: bool,
+    /// password name
+    pass_name: Option<String>,
+}
 
-	Ok(())
+
+impl Cli {
+    pub fn run(&self) -> Result<()> {
+        Ok(())
+    }
 }

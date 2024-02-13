@@ -1,7 +1,16 @@
 use anyhow::Result;
+use clap::Parser;
 
 
-pub fn run(_search_string:String)-> Result<()>{
+#[derive(Debug,Parser)]
+pub struct Cli {
+	/// Search string
+	search_string: String,
+}
 
-	Ok(())
+impl Cli {
+	pub fn run(&self)-> Result<()>{
+	
+		Ok(())
+	}
 }

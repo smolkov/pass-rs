@@ -1,5 +1,11 @@
 use anyhow::Result;
+use clap::Parser;
 
-pub fn run()-> Result<()>{
-	Ok(())
+#[derive(Debug, Parser)]
+pub struct Cli {}
+
+impl Cli {
+    pub fn run(&self) -> Result<()> {
+        Ok(())
+    }
 }

@@ -2,6 +2,8 @@ use std::path::PathBuf;
 
 use clap::{Parser, Subcommand};
 
+use crate::command::*;
+
 #[derive(Debug, Parser)]
 #[command(author, version, about, long_about = None)]
 pub struct Args {
@@ -12,93 +14,28 @@ pub struct Args {
 
 #[derive(Debug, Subcommand)]
 pub enum Command {
-    /// Initialize new password storage and use gpg-id for encryption.
-    Init {
-        /// Storage path (optional)
-        #[arg(short, long)]
-        path: Option<PathBuf>,
-        /// GPG id ( optional)
-        gpg_id: Option<String>,
-    },
+    /// Init new pass storage
+    Init(init::Cli),
     /// List passwords.
-    Ls {
-        /// subfolder
-        subfolder: Option<PathBuf>,
-    },
+    Ls(ls::Cli),
     /// List passwords that match pass-names.
-    Find {
-        /// Pass names  
-        pass_name: String,
-    },
+    Find(find::Cli),
     /// Show existing password and optionally put it on the clipboard.
-    Show {
-        /// Put on the clipboard, it will be cleared in 45 seconds.
-        #[arg(short, long, default_value_t = false)]
-        clip: bool,
-        /// password name
-        pass_name: Option<String>,
-    },
+    Show(show::Cli) ,
     /// Search for password files containing search-string when decrypted.
-    Grep {
-        search_string: String,
-    },
+    Grep(grep::Cli),
     /// Insert new password.
-    Insert {
-        /// Force insert new password
-        #[arg(short, long, default_value_t = false)]
-        force: bool,
-        /// Password name
-        pass_name: String,
-    },
+    Insert(insert::Cli),
     /// Insert a new password or edit an existing password using mvim.
-    Edit {
-        /// Password name 
-        pass_name: String
-    },
+    Edit(edit::Cli),
     /// Generate a new password of pass-length (or 25 if unspecified) with optionally no symbols.
-    Generate{
-       /// Force insert new password
-       #[arg(short, long, default_value_t = false)]
-       no_symbols: bool,
-       /// Optionally put on the clipboard, it will be cleared in 45 seconds.
-       #[arg(short, long, default_value_t = false)]
-       clip: bool,
-       /// Force generate 
-       #[arg(short, long, default_value_t = false)]
-       force: bool, 
-       /// Password name
-       pass_name: String,
-       /// Password length
-       pass_len: Option<u8>
-    },
+    Generate(generate::Cli),
     /// Remove existing password or directory, optionally forcefully.
-    Rm {
-         /// Recursive to rm directory
-         #[arg(short, long, default_value_t = false)]
-         recursive: bool, 
-         /// Password path to remove
-         pass_name: PathBuf
-         
-    },
+    Rm(rm::Cli),
     /// Renames or moves old-path to new-path, optionally forcefully, selectively reencrypting.
-    Mv {
-       /// Force insert new password
-       #[arg(short, long, default_value_t = false)]
-       force: bool, 
-       /// Old path
-       src: PathBuf,
-       /// Moved to new path
-       dest: PathBuf
-    },
-    Cp {
-       /// Source path
-       src: PathBuf,
-       /// Destination path
-       dest: PathBuf 
-    },
+    Mv(mv::Cli),
+    /// Copy password
+    Cp(cp::Cli),
     /// If the password store is a git repository, execute a git command specified by git-command-args.
-    Git{
-
-    }
-
+    Git(git::Cli),
 }

@@ -1,7 +1,20 @@
+use std::path::PathBuf;
+
 use anyhow::Result;
+use clap::Parser;
 
-/// Run `pass edit` command
-pub fn run( _pass_name: String) -> Result<()>{
+#[derive(Debug,Parser)]
+pub struct Cli {
+    /// Storage path (optional)
+    #[arg(short, long)]
+    path: Option<PathBuf>,
+    /// GPG id ( optional)
+    gpg_id: Option<String>,
+}
 
-	Ok(())
+impl Cli {
+    /// Run `pass edit` command
+    pub fn run(&self) -> Result<()> {
+        Ok(())
+    }
 }
