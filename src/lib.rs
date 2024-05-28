@@ -1,11 +1,14 @@
-//! # pass-rs 
+//! # pass-rs
 //!
 //! `pass` - password storage
 
-pub mod command;
 pub mod cli;
+pub mod command;
 pub mod config;
+pub mod dirs;
 pub mod password;
+pub mod key;
+pub mod store;
 
 /// Adds one to the number given.
 ///

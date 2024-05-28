@@ -3,7 +3,9 @@ use std::path::PathBuf;
 use anyhow::Result;
 use clap::Parser;
 
-#[derive(Debug,Parser)]
+use crate::store::Store;
+
+#[derive(Debug, Parser)]
 pub struct Cli {
     /// Force insert new password
     #[arg(short, long, default_value_t = false)]
@@ -13,8 +15,7 @@ pub struct Cli {
 }
 
 impl Cli {
-	pub fn run(&self) -> Result<()> {
-		Ok(())
-	}
-
+    pub fn run(&self, _store: &Store) -> Result<()> {
+        Ok(())
+    }
 }

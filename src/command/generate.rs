@@ -1,10 +1,13 @@
+use std::fs;
 use std::io::stdin;
 use std::path::PathBuf;
 
 use anyhow::Result;
 use clap::Parser;
 
-use crate::password::Generator;
+use crate::dirs;
+use crate::password::Password;
+use crate::store::Store;
 
 #[derive(Debug, Parser)]
 pub struct Cli {
@@ -24,14 +27,14 @@ pub struct Cli {
 }
 
 impl Cli {
-    pub fn run(&self) -> Result<()> {
+    pub fn run(&self, store: &Store) -> Result<()> {
         println!("Generate password {}", self.pass_name.display());
         // TODO:
-        // [ ] join store path + name.
+        // [x] join store path + name.
         // [x] check if exist replace or exit.
-        // [ ] if not exist create folder.
+        // [x] if not exist create folder.
         // [x] generate password.
-        // [ ] write password.
+        // [x] write password.
         // [ ] encrypt file.
         if self.pass_name.exists() {
             println!("An entry already exists for test.com/sascha. Overwrite it? [y/N]");
@@ -42,8 +45,15 @@ impl Cli {
             }
         } else {
         }
-        let generator = Generator::new(self.pass_len.unwrap_or(30) as usize);
-
+        let generator = Password::new(self.pass_len.unwrap_or(30) as usize).witch_no_symbol(self.no_symbols);
+        let pass = generator.generate();
+        if let Some(parent) = self.pass_name.parent() {
+            let path = dirs::WS.store.join(parent);
+            if !path.is_dir() {
+                fs::create_dir_all(path)?;
+            }
+        }
+        fs::write(dirs::WS.store.join(&self.pass_name), pass)?;
         Ok(())
     }
 }

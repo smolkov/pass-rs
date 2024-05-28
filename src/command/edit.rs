@@ -3,6 +3,8 @@ use std::path::PathBuf;
 use anyhow::Result;
 use clap::Parser;
 
+use crate::store::Store;
+
 #[derive(Debug,Parser)]
 pub struct Cli {
     /// Storage path (optional)
@@ -14,7 +16,7 @@ pub struct Cli {
 
 impl Cli {
     /// Run `pass edit` command
-    pub fn run(&self) -> Result<()> {
+    pub fn run(&self,store:&Store) -> Result<()> {
         Ok(())
     }
 }

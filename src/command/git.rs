@@ -1,11 +1,13 @@
 use anyhow::Result;
 use clap::Parser;
 
+use crate::store::Store;
+
 #[derive(Debug, Parser)]
 pub struct Cli {}
 
 impl Cli {
-    pub fn run(&self) -> Result<()> {
+    pub fn run(&self, store: &Store) -> Result<()> {
         Ok(())
     }
 }

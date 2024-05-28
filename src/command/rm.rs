@@ -1,11 +1,13 @@
 use std::path::PathBuf;
 
-use clap::Parser;
 use anyhow::Result;
+use clap::Parser;
 
-#[derive(Debug,Parser)]
+use crate::store::Store;
+
+#[derive(Debug, Parser)]
 pub struct Cli {
-	/// remove recursive
+    /// remove recursive
     #[arg(short, long, default_value_t = false)]
     recursive: bool,
     /// Password path to remove
@@ -13,7 +15,7 @@ pub struct Cli {
 }
 
 impl Cli {
-    pub fn run(&self) -> Result<()> {
+    pub fn run(&self, _store: &Store) -> Result<()> {
         Ok(())
     }
 }

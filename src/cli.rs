@@ -26,7 +26,7 @@ pub enum Command {
     Grep(grep::Cli),
     /// Insert new password.
     Insert(insert::Cli),
-    /// Insert a new password or edit an existing password using mvim.
+    /// Insert a new password or edit an existing password using nvim.
     Edit(edit::Cli),
     /// Generate a new password of pass-length (or 25 if unspecified) with optionally no symbols.
     Generate(generate::Cli),
@@ -36,6 +36,8 @@ pub enum Command {
     Mv(mv::Cli),
     /// Copy password
     Cp(cp::Cli),
+    /// Key management
+    Key(key::Cli),
     /// If the password store is a git repository, execute a git command specified by git-command-args.
     Git(git::Cli),
 }
