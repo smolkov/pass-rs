@@ -21,8 +21,8 @@ pub struct Cli {
 
 
 impl Cli {
-	pub fn run(&self,_store:&Store) -> Result<()> {
-		std::fs::copy(self.src.as_path(),self.dest.as_path())?;
+	pub fn run(&self,store:&Store) -> Result<()> {
+		std::fs::copy(store.path().join(self.src.as_path()),store.path().join(self.dest.as_path()))?;
 		Ok(())
 	}
 }

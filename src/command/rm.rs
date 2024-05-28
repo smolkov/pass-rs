@@ -1,4 +1,5 @@
 use std::path::PathBuf;
+use std::fs;
 
 use anyhow::Result;
 use clap::Parser;
@@ -15,7 +16,11 @@ pub struct Cli {
 }
 
 impl Cli {
-    pub fn run(&self, _store: &Store) -> Result<()> {
+    pub fn run(&self, store: &Store) -> Result<()> {
+        let path = store.path().join(self.pass_name.as_path()); 
+        if path.exists() {
+            fs::remove_file(path)?;
+        }
         Ok(())
     }
 }

@@ -4,6 +4,7 @@ use std::path::PathBuf;
 
 use anyhow::Result;
 use clap::Parser;
+use openssl::version::dir;
 
 use crate::dirs;
 use crate::password::Password;
@@ -29,18 +30,14 @@ pub struct Cli {
 impl Cli {
     pub fn run(&self, store: &Store) -> Result<()> {
         println!("Generate password {}", self.pass_name.display());
-        // TODO:
-        // [x] join store path + name.
-        // [x] check if exist replace or exit.
-        // [x] if not exist create folder.
-        // [x] generate password.
-        // [x] write password.
-        // [ ] encrypt file.
-        if self.pass_name.exists() {
+        let path = dirs::WS.store.join(&self.pass_name);
+        let key = store.private_key()?;
+        if path.exists() && ! self.force {
             println!("An entry already exists for test.com/sascha. Overwrite it? [y/N]");
             let mut user_input = String::new();
             stdin().read_line(&mut user_input)?;
-            if user_input != "y" {
+            if !user_input.starts_with("y") {
+                println!("exit because user input");
                 return Ok(());
             }
         } else {
@@ -53,7 +50,12 @@ impl Cli {
                 fs::create_dir_all(path)?;
             }
         }
-        fs::write(dirs::WS.store.join(&self.pass_name), pass)?;
+        println!("pass: {}",pass);
+        let pass = key.encrypt(pass.as_bytes())?;
+        fs::write(path, &pass.trim())?;
+        println!("encrypted:{}",&pass);
+        println!("decrypted:{}",key.decrypt(&pass)?);
+
         Ok(())
     }
 }

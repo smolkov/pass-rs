@@ -7,11 +7,9 @@ use crate::store::Store;
 
 #[derive(Debug,Parser)]
 pub struct Cli {
-    /// Storage path (optional)
+    /// Edit password 
     #[arg(short, long)]
-    path: Option<PathBuf>,
-    /// GPG id ( optional)
-    gpg_id: Option<String>,
+    path: PathBuf,
 }
 
 impl Cli {
