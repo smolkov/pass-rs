@@ -11,7 +11,7 @@ use crate::key::{PrivateKey, PublicKey};
 static PRIVATE_KEY_FILE: &str = ".key";
 static PUBLIC_KEY_FILE: &str = ".key.pub";
 pub struct Store {
-	path: PathBuf,
+	pub path: PathBuf,
     config: Config,
 }
 
@@ -28,8 +28,8 @@ impl Store {
         let key = PublicKey::from_pem(fs::read_to_string(self.path.join(PUBLIC_KEY_FILE))?.as_bytes())?;
         Ok(key)
     }
-	pub fn path(&self) -> &Path {
-		self.path.as_path()
+	pub fn password(&self,path:&Path) -> PathBuf {
+		self.path.join(path)
 	}
     pub fn update_keys(&self, key: &PrivateKey) -> Result<()> {
         let key_path = self.path.join(PRIVATE_KEY_FILE);

@@ -1,14 +1,16 @@
 use std::fs;
-use std::io::stdin;
+use std::io::Write;
 use std::path::PathBuf;
 
 use anyhow::Result;
 use clap::Parser;
-use openssl::version::dir;
+use console::Term;
+use console::style;
 
 use crate::dirs;
 use crate::password::Password;
 use crate::store::Store;
+
 
 #[derive(Debug, Parser)]
 pub struct Cli {
@@ -29,18 +31,20 @@ pub struct Cli {
 
 impl Cli {
     pub fn run(&self, store: &Store) -> Result<()> {
-        println!("Generate password {}", self.pass_name.display());
-        let path = dirs::WS.store.join(&self.pass_name);
+        let path = store.password(&self.pass_name);
         let key = store.private_key()?;
+        let term = Term::stdout(); 
         if path.exists() && ! self.force {
-            println!("An entry already exists for test.com/sascha. Overwrite it? [y/N]");
-            let mut user_input = String::new();
-            stdin().read_line(&mut user_input)?;
+            write!(&term,"An entry already exists for {}. Overwrite it? {} ",style(self.pass_name.display()).cyan().bold(),style("[y/N]").red().bold())?;
+            let user_input = term.read_line()?;
             if !user_input.starts_with("y") {
-                println!("exit because user input");
                 return Ok(());
             }
-        } else {
+        }else {
+            let parent =path.parent().unwrap();
+            if !parent.is_dir()  {
+                fs::create_dir_all(parent)?;
+            }
         }
         let generator = Password::new(self.pass_len.unwrap_or(30) as usize).witch_no_symbol(self.no_symbols);
         let pass = generator.generate();
@@ -50,12 +54,10 @@ impl Cli {
                 fs::create_dir_all(path)?;
             }
         }
-        println!("pass: {}",pass);
+        writeln!(&term,"{}",style(format!("The generated password for {} is:",self.pass_name.display())).bold())?;
+        writeln!(&term,"{}",style(pass.as_str()).green().bold())?;
         let pass = key.encrypt(pass.as_bytes())?;
         fs::write(path, &pass.trim())?;
-        println!("encrypted:{}",&pass);
-        println!("decrypted:{}",key.decrypt(&pass)?);
-
         Ok(())
     }
 }

@@ -22,7 +22,7 @@ pub struct Cli {
 
 impl Cli {
 	pub fn run(&self,store:&Store) -> Result<()> {
-		std::fs::copy(store.path().join(self.src.as_path()),store.path().join(self.dest.as_path()))?;
+		std::fs::copy(store.password(&self.src),store.password(self.dest.as_path()))?;
 		Ok(())
 	}
 }
