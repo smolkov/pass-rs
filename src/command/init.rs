@@ -1,32 +1,60 @@
-use std::path::PathBuf;
-
 use anyhow::Result;
-use clap::Parser;
+use clap::{Parser, Subcommand};
+use git2::Repository;
+
+use crate::git::Git;
+use crate::key::PrivateKey;
 use crate::store::Store;
 
+#[derive(Debug, Parser)]
+struct New {
+    /// n
+    #[arg(short, long, default_value_t = 4095)]
+    len: u32,
+}
+
+#[derive(Debug, Parser)]
+struct Checkout {
+    url: String,
+}
+
 /// Initialize new password storage and use gpg-id for encryption.
+#[derive(Debug, Subcommand)]
+enum Command {
+    /// create new password store
+    New(New),
+    /// checkout remote password store
+    Checkout(Checkout),
+}
 
 #[derive(Debug, Parser)]
 #[command(author, version, about, long_about = None)]
 pub struct Cli {
-    /// GPG id ( optional)
-    gpg_id: String,
+    #[command(subcommand)]
+    cmd: Command,
 }
 
 impl Cli {
-    pub fn run(&self,_store:&Store) -> Result<()> {
-        // let path = self.path.clone().unwrap_or_else(|| match dirs::home_dir() {
-            // Some(home) => home.join(".pass_store"),
-            // None => PathBuf::from(".pass_store"),
-        // });
-        // if path.exists() {
-            // return Err(anyhow::anyhow!(
-                // "initialize password storage in `{}` impossible - already exist",
-                // path.display()
-            // ));
-        // }
-        // std::fs::create_dir_all(&path)?;
-        // std::fs::write(path.join(".gpg-id"), self.gpg_id.trim())?;
-        Ok(())
+    pub fn run(&self, store: &Store) -> Result<()> {
+        match &self.cmd {
+            Command::New(cmd) => new(store, cmd),
+            Command::Checkout(cmd) => checkout(store, cmd),
+        }
     }
+}
+
+fn new(store: &Store, new: &New) -> Result<()> {
+    let privat_key = PrivateKey::generate_rsa(new.len)?;
+    store.update_keys(&privat_key)?;
+    println!("{}", privat_key.private_pem()?);
+    println!("{}", privat_key.public_pem()?);
+    Ok(())
+}
+
+fn checkout(store: &Store, checkout: &Checkout) -> Result<()> {
+    match Git::clone(&checkout.url, store.directory()) {
+        Ok(_) => {}
+        Err(e) => panic!("failed to clone: {}", e),
+    }
+    Ok(())
 }

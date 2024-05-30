@@ -4,8 +4,6 @@ use std::{path::PathBuf, sync::RwLock};
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
 
-// static CONFIG: RwLock<Config>  = RwLock::new(Config::default());
-
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
     pub gpg_key: String,

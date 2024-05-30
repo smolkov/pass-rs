@@ -9,6 +9,7 @@ pub mod dirs;
 pub mod password;
 pub mod key;
 pub mod store;
+pub mod git;
 
 /// Adds one to the number given.
 ///

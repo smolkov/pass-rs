@@ -24,7 +24,6 @@ impl Cli {
             eprintln!("password {} is not exist in store {}",self.pass_name.display(),path.display());
             process::exit(1);
         }
-
         let key = store.private_key()?;
         let term = Term::stdout();
         writeln!(&term,"{}",key.decrypt(fs::read_to_string(path)?.as_str())?)?;

@@ -2,23 +2,34 @@ use anyhow::Result;
 use std::fs;
 use std::io;
 use std::path::{PathBuf,Path};
+use walkdir::WalkDir;
 
 use crate::config::Config;
-use crate::dirs;
+use crate::git::Git;
 use crate::dirs::WS;
 use crate::key::{PrivateKey, PublicKey};
 
 static PRIVATE_KEY_FILE: &str = ".key";
 static PUBLIC_KEY_FILE: &str = ".key.pub";
 pub struct Store {
-	pub path: PathBuf,
+	path: PathBuf,
     config: Config,
 }
 
 impl Store {
+    pub fn new(path:&str,config:Config) -> Result<Store>{
+        let path = PathBuf::from(path);
+        if !path.is_dir() {
+            fs::create_dir_all(&path)?;
+        }
+        Ok(Store { path:PathBuf::from(path),config }) 
+    }
     pub fn open(config:Config) -> Result<Store> {
 		let path = WS.store.clone();	
         Ok(Store { path,config })
+    }
+    pub fn git(&self) -> Result<Git>{
+        Git::open(&self.path)
     }
     pub fn private_key(&self) -> Result<PrivateKey> {
         let key = PrivateKey::from_pem(fs::read_to_string(self.path.join(PRIVATE_KEY_FILE))?.as_bytes())?;
@@ -31,6 +42,9 @@ impl Store {
 	pub fn password(&self,path:&Path) -> PathBuf {
 		self.path.join(path)
 	}
+    pub fn directory(&self) -> &Path{
+        &self.path
+    }
     pub fn update_keys(&self, key: &PrivateKey) -> Result<()> {
         let key_path = self.path.join(PRIVATE_KEY_FILE);
         if key_path.exists() {
@@ -46,5 +60,35 @@ impl Store {
         let key_path = self.path.join(PUBLIC_KEY_FILE);
         fs::write(key_path, key.public_pem()?)?;
         Ok(())
+    }
+    pub fn is_empty(&self) -> bool {
+        if !self.path.exists() {
+            return true;
+        }
+        if WalkDir::new(self.path.as_path()).into_iter().filter_map(|e|e.ok()).skip(1).count() == 0 {
+            return true; 
+        }
+        return false;
+    }
+    pub fn files(&self) -> usize {
+        WalkDir::new(self.path.as_path()).into_iter().filter_map(|e|e.ok()).skip(1).count() 
+    }
+}
+
+
+
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_is_empty() {
+        let store = Store::new("test",Config::default()).unwrap();
+        assert!(store.is_empty());
+        // println!("empty:{}",store.is_empty());
+        // println!("files:{}",store.files());
+        fs::remove_dir_all("test").unwrap();
+        
     }
 }
