@@ -1,4 +1,4 @@
-use std::io::{stdout,stdin, Write};
+use std::io::Write;
 use std::path::PathBuf;
 use std::fs;
 use anyhow::Result;
@@ -29,7 +29,7 @@ impl Cli {
             let pass = term.read_line()?;
             // writeln!(&term,"\npass:{}",&pass)?;
             let pass = key.encrypt(pass.as_bytes())?;
-            fs::write(path, &pass.trim())?;
+            fs::write(path, pass.trim())?;
         }
         Ok(())
     }

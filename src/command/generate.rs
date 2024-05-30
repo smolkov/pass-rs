@@ -37,7 +37,7 @@ impl Cli {
         if path.exists() && ! self.force {
             write!(&term,"An entry already exists for {}. Overwrite it? {} ",style(self.pass_name.display()).cyan().bold(),style("[y/N]").red().bold())?;
             let user_input = term.read_line()?;
-            if !user_input.starts_with("y") {
+            if !user_input.starts_with('y') {
                 return Ok(());
             }
         }else {
@@ -57,7 +57,7 @@ impl Cli {
         writeln!(&term,"{}",style(format!("The generated password for {} is:",self.pass_name.display())).bold())?;
         writeln!(&term,"{}",style(pass.as_str()).green().bold())?;
         let pass = key.encrypt(pass.as_bytes())?;
-        fs::write(path, &pass.trim())?;
+        fs::write(path, pass.trim())?;
         Ok(())
     }
 }

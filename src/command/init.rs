@@ -1,6 +1,5 @@
 use anyhow::Result;
 use clap::{Parser, Subcommand};
-use git2::Repository;
 
 use crate::git::Git;
 use crate::key::PrivateKey;

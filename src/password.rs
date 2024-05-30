@@ -74,13 +74,12 @@ mod test {
 
     #[test]
     fn test_preparations() {
-        for pass in Password::new(20).witch_no_symbol(true).into_iter().take(4) {
+        for pass in Password::new(20).witch_no_symbol(true).take(4) {
             println!("{}",pass);
         }
-        Password::new(20).into_iter().take(4).for_each(|p| println!("{}",p));
-        let password = Password::new(10);
-        
-        // pass.into_iter().take(2).for_each(|p| println!("{}",p));
+        Password::new(20).take(4).for_each(|p| println!("{}",p));
+        // let password = Password::new(10);
+        // password.into_iter().take(2).for_each(|p| println!("{}",p));
     
     }
 }

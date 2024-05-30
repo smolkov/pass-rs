@@ -1,6 +1,3 @@
-use std::path::PathBuf;
-use std::io;
-use std::fs;
 
 use anyhow::Result;
 use clap::Parser;
@@ -8,7 +5,6 @@ use clap::Subcommand;
 
 use crate::store::Store;
 use crate::key::PrivateKey;
-use crate::dirs;
 
 /// Initialize new password storage and use gpg-id for encryption.
 

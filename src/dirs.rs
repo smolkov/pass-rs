@@ -4,7 +4,7 @@ use once_cell::sync::Lazy;
 use std::fs;
 
 pub static HOME: Lazy<PathBuf> = Lazy::new(||dirs::home_dir().unwrap_or_else(|| PathBuf::from("/")));
-pub static WS: Lazy<Dirs> = Lazy::new(||Dirs::new());
+pub static WS: Lazy<Dirs> = Lazy::new(Dirs::new);
 
 
 
@@ -17,7 +17,7 @@ pub struct Dirs {
 
 impl Dirs {
 	pub fn new() -> Dirs {
-		let home = var("HOME").map(|s|PathBuf::from(s)).unwrap_or(PathBuf::from("."));
+		let home = var("HOME").map(PathBuf::from).unwrap_or(PathBuf::from("."));
 		let store = home.join(".passwords");
 		let config = home.join(".config/pass");
 		if !store.is_dir() {
@@ -31,3 +31,8 @@ impl Dirs {
 	}
 }
 
+impl Default for Dirs {
+	fn default() -> Self {
+		Dirs::new()
+	}
+}

@@ -20,7 +20,7 @@ pub struct Cli {
 impl Cli {
     pub fn run(&self, store: &Store) -> Result<()> {
         let path = store.password(self.pass_name.as_path());
-        let key = store.private_key()?;
+        let _key = store.private_key()?;
         let term = Term::stdout();
         if path.exists() {
             write!(
@@ -30,7 +30,7 @@ impl Cli {
                 style("[y/N]").red().bold()
             )?;
             let user_input = term.read_line()?;
-            if !user_input.starts_with("y") {
+            if !user_input.starts_with('y') {
                 return Ok(());
             }
         }else {

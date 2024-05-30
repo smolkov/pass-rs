@@ -1,57 +1,60 @@
 use anyhow::Result;
 use std::fs;
 use std::io;
-use std::path::{PathBuf,Path};
+use std::path::{Path, PathBuf};
 use walkdir::WalkDir;
 
 use crate::config::Config;
-use crate::git::Git;
 use crate::dirs::WS;
+use crate::git::Git;
 use crate::key::{PrivateKey, PublicKey};
 
 static PRIVATE_KEY_FILE: &str = ".key";
 static PUBLIC_KEY_FILE: &str = ".key.pub";
 pub struct Store {
-	path: PathBuf,
+    path: PathBuf,
+    #[allow(dead_code)]
     config: Config,
 }
 
 impl Store {
-    pub fn new(path:&str,config:Config) -> Result<Store>{
+    pub fn new(path: &str, config: Config) -> Result<Store> {
         let path = PathBuf::from(path);
         if !path.is_dir() {
             fs::create_dir_all(&path)?;
         }
-        Ok(Store { path:PathBuf::from(path),config }) 
+        Ok(Store { path, config })
     }
-    pub fn open(config:Config) -> Result<Store> {
-		let path = WS.store.clone();	
-        Ok(Store { path,config })
+    pub fn open(config: Config) -> Result<Store> {
+        let path = WS.store.clone();
+        Ok(Store { path, config })
     }
-    pub fn git(&self) -> Result<Git>{
+    pub fn git(&self) -> Result<Git> {
         Git::open(&self.path)
     }
     pub fn private_key(&self) -> Result<PrivateKey> {
-        let key = PrivateKey::from_pem(fs::read_to_string(self.path.join(PRIVATE_KEY_FILE))?.as_bytes())?;
+        let key =
+            PrivateKey::from_pem(fs::read_to_string(self.path.join(PRIVATE_KEY_FILE))?.as_bytes())?;
         Ok(key)
     }
     pub fn public_key(&self) -> Result<PublicKey> {
-        let key = PublicKey::from_pem(fs::read_to_string(self.path.join(PUBLIC_KEY_FILE))?.as_bytes())?;
+        let key =
+            PublicKey::from_pem(fs::read_to_string(self.path.join(PUBLIC_KEY_FILE))?.as_bytes())?;
         Ok(key)
     }
-	pub fn password(&self,path:&Path) -> PathBuf {
-		self.path.join(path)
-	}
-    pub fn directory(&self) -> &Path{
+    pub fn password(&self, path: &Path) -> PathBuf {
+        self.path.join(path)
+    }
+    pub fn directory(&self) -> &Path {
         &self.path
     }
     pub fn update_keys(&self, key: &PrivateKey) -> Result<()> {
         let key_path = self.path.join(PRIVATE_KEY_FILE);
         if key_path.exists() {
-            println!("Private key is already exist. Do you want to replace it(Y/n): ");
+            println!("Private key is already exist. Do you want to replace it(y/N): ");
             let mut buffer = String::new();
             io::stdin().read_line(&mut buffer)?;
-            if !buffer.starts_with("Y") {
+            if !buffer.starts_with('y') {
                 println!("Your answer is {} exit..", buffer);
                 std::process::exit(1);
             }
@@ -65,18 +68,21 @@ impl Store {
         if !self.path.exists() {
             return true;
         }
-        if WalkDir::new(self.path.as_path()).into_iter().filter_map(|e|e.ok()).skip(1).count() == 0 {
-            return true; 
-        }
-        return false;
+        WalkDir::new(self.path.as_path())
+            .into_iter()
+            .filter_map(|e| e.ok())
+            .skip(1)
+            .count()
+            == 0
     }
     pub fn files(&self) -> usize {
-        WalkDir::new(self.path.as_path()).into_iter().filter_map(|e|e.ok()).skip(1).count() 
+        WalkDir::new(self.path.as_path())
+            .into_iter()
+            .filter_map(|e| e.ok())
+            .skip(1)
+            .count()
     }
 }
-
-
-
 
 #[cfg(test)]
 mod test {
@@ -84,11 +90,10 @@ mod test {
 
     #[test]
     fn test_is_empty() {
-        let store = Store::new("test",Config::default()).unwrap();
+        let store = Store::new("test", Config::default()).unwrap();
         assert!(store.is_empty());
         // println!("empty:{}",store.is_empty());
         // println!("files:{}",store.files());
         fs::remove_dir_all("test").unwrap();
-        
     }
 }

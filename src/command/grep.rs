@@ -10,7 +10,7 @@ pub struct Cli {
 }
 
 impl Cli {
-    pub fn run(&self, store: &Store) -> Result<()> {
+    pub fn run(&self, _store: &Store) -> Result<()> {
         Ok(())
     }
 }

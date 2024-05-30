@@ -37,7 +37,7 @@ impl PrivateKey {
     }
 
     pub fn decrypt(&self, data: &str) -> Result<String> {
-		decrypt_private_base64(&self.key,data.as_bytes()) 
+		decrypt_private_base64(&self.key,data) 
     }
 }
 
@@ -55,7 +55,7 @@ impl PublicKey {
     }
 }
 
-fn decrypt_private_base64<T>(key:&PKey<T>,data: &[u8]) -> Result<String> where T: HasPrivate{
+fn decrypt_private_base64<T>(key:&PKey<T>,data: &str) -> Result<String> where T: HasPrivate{
 	let data = base_decode(data)?;
 	let mut decrypter = Decrypter::new(key).unwrap();
 	decrypter.set_rsa_padding(Padding::PKCS1).unwrap();
@@ -81,10 +81,10 @@ where
 }
 
 fn base_encode(data:&[u8]) -> String {
-	base64::encode(&base64::encode(&data))
+	openssl::base64::encode_block(openssl::base64::encode_block(data).as_bytes())
 }
 
-fn base_decode(data:&[u8]) -> Result<Vec<u8>> {
-	let data =  base64::decode(&base64::decode(data)?)?;	
+fn base_decode(data:&str) -> Result<Vec<u8>> {
+	let data =  openssl::base64::decode_block(String::from_utf8(openssl::base64::decode_block(data)?)?.as_str())?;	
 	Ok(data)
 }

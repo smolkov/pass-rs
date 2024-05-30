@@ -23,7 +23,7 @@ impl Cli {
         let term = Term::stdout(); 
         if path.exists() {
             write!(&term,"Are you sure you would like to delete {}  {} ",style(self.pass_name.display()).cyan().bold(),style("[y/N]").red().bold())?;
-            if term.read_line()?.starts_with("y") {
+            if term.read_line()?.starts_with('y') {
                 fs::remove_file(path)?;
             }
         }
