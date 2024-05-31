@@ -38,7 +38,7 @@ pub fn find_name_in_directory(sender: Sender<String>, search_in: PathBuf, name: 
         for entry in fs::read_dir(&search_in)?.filter_map(|e| e.ok()) {
             let path = entry.path();
             let file_name = path.strip_prefix(&search_in)?.to_str().unwrap();
-            // println!("{}",file_name);
+            // println!("{}:{}",file_name,&name);
             if file_name.contains(&name) {
                 sender.send(path.to_str().unwrap().to_string())?;
             } else if path.is_dir() && !path.is_symlink() {
@@ -58,6 +58,8 @@ pub fn passwords_tree(store: &Store, path: PathBuf) -> Result<()> {
             let ws_path = entry.path().strip_prefix(store.directory())?;
             writeln!(&term, "{}", ws_path.display())?;
         }
+    }else {
+        writeln!(&term, "{}", style(ws_path.to_str().unwrap()).bold())?; 
     }
     Ok(())
 }

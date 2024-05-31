@@ -18,8 +18,8 @@ pub struct Store {
 }
 
 impl Store {
-    pub fn new(path: &str, config: Config) -> Result<Store> {
-        let path = PathBuf::from(path);
+    pub fn new<P:AsRef<Path>>(path: P, config: Config) -> Result<Store> {
+        let path = path.as_ref().to_path_buf();
         if !path.is_dir() {
             fs::create_dir_all(&path)?;
         }

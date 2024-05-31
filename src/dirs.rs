@@ -4,6 +4,7 @@ use once_cell::sync::Lazy;
 use std::fs;
 
 pub static HOME: Lazy<PathBuf> = Lazy::new(||dirs::home_dir().unwrap_or_else(|| PathBuf::from("/")));
+pub static STORE: Lazy<PathBuf> = Lazy::new(||HOME.join(".passwords"));
 pub static WS: Lazy<Dirs> = Lazy::new(Dirs::new);
 
 

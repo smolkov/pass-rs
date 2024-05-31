@@ -1,10 +1,17 @@
 use anyhow::Result;
-use clap::Parser;
+use clap::{Parser, Subcommand};
 
 use crate::store::Store;
 
+#[derive(Debug,Subcommand)] 
+enum  Cmd {
+    
+}
+
 #[derive(Debug, Parser)]
-pub struct Cli {}
+pub struct Cli {
+
+}
 
 impl Cli {
     pub fn run(&self, _store: &Store) -> Result<()> {
