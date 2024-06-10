@@ -39,7 +39,13 @@ impl Cli {
                 fs::create_dir_all(parent)?;
             }
         }
-
+        let key = store.private_key().map_err(|_|anyhow::anyhow!("Store get private key error"))?;
+        let name = path.file_name().unwrap();
+        write!(&term, "Enter new password for {}: ",style(name.to_str().unwrap()).red().bold())?;
+        let pass = term.read_line()?;
+        let pass = key.encrypt(pass.as_bytes())?;
+        fs::write(&path, pass.trim())?;
+        store.git()?.add(path.strip_prefix(store.directory())?)?;
         Ok(())
     }
 }

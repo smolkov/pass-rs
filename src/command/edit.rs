@@ -29,7 +29,8 @@ impl Cli {
             let pass = term.read_line()?;
             // writeln!(&term,"\npass:{}",&pass)?;
             let pass = key.encrypt(pass.as_bytes())?;
-            fs::write(path, pass.trim())?;
+            fs::write(&path, pass.trim())?;
+            store.git()?.add(&path)?;
         }
         Ok(())
     }

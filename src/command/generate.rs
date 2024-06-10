@@ -57,7 +57,8 @@ impl Cli {
         writeln!(&term,"{}",style(format!("The generated password for {} is:",self.pass_name.display())).bold())?;
         writeln!(&term,"{}",style(pass.as_str()).green().bold())?;
         let pass = key.encrypt(pass.as_bytes())?;
-        fs::write(path, pass.trim())?;
+        fs::write(&path, pass.trim())?;
+        store.git()?.add(&path)?;
         Ok(())
     }
 }
