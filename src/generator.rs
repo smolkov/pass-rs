@@ -1,16 +1,17 @@
 use rand::Rng;
 
 const CHARSET: &[u8] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-const CHARSET_SYMBOLS: &[u8] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789`~,.?/[]{}|-_=+()@#$%^&*:;";
+const CHARSET_SYMBOLS: &[u8] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789`~,.?/\\[]{}|-_=+()@#$%^&*:;'\"<>";
 
-pub struct Password {
+
+pub struct PasswordGenerator {
     no_symbols: bool,
     len: usize,
 }
 
-impl Password {
-    pub fn new(len: usize) -> Password {
-        Password {
+impl PasswordGenerator {
+    pub fn new(len: usize) -> PasswordGenerator {
+        PasswordGenerator {
             no_symbols: false,
             len,
         }
@@ -42,7 +43,7 @@ impl Password {
 
 
 pub struct PasswordIterator {
-    password: Password
+    password: PasswordGenerator
 }
 
 // impl IntoIterator for Password {
@@ -60,7 +61,7 @@ impl Iterator for PasswordIterator {
         Some(self.password.generate())
     }
 }
-impl Iterator for Password {
+impl Iterator for PasswordGenerator {
     type Item = String;
     fn next(&mut self) -> Option<Self::Item> {
         Some(self.generate())
@@ -69,15 +70,18 @@ impl Iterator for Password {
 
 #[cfg(test)]
 mod test {
-    use super::Password;
+    use super::PasswordGenerator;
 
 
     #[test]
     fn test_preparations() {
-        for pass in Password::new(20).witch_no_symbol(true).take(4) {
+        const test_symbols:&str = "`~,.?/\\[]{}|-_=+()@#$%^&*:;'\"<>";
+        for pass in PasswordGenerator::new(20).witch_no_symbol(true).take(4) {
             println!("{}",pass);
         }
-        Password::new(20).take(4).for_each(|p| println!("{}",p));
+        PasswordGenerator::new(20).take(4).for_each(|p| println!("{}",p));
+        PasswordGenerator::new(20).take(4).for_each(|p| println!("{}",p.chars().filter(|ch| test_symbols.find(*ch).is_some()).fold(0, |acc, _| acc + 1)));
+
         // let password = Password::new(10);
         // password.into_iter().take(2).for_each(|p| println!("{}",p));
     

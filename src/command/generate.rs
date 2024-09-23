@@ -8,7 +8,7 @@ use console::Term;
 use console::style;
 
 use crate::dirs;
-use crate::password::Password;
+use crate::generator::PasswordGenerator;
 use crate::store::Store;
 
 
@@ -46,7 +46,7 @@ impl Cli {
                 fs::create_dir_all(parent)?;
             }
         }
-        let generator = Password::new(self.pass_len.unwrap_or(30) as usize).witch_no_symbol(self.no_symbols);
+        let generator = PasswordGenerator::new(self.pass_len.unwrap_or(30) as usize).witch_no_symbol(self.no_symbols);
         let pass = generator.generate();
         if let Some(parent) = self.pass_name.parent() {
             let path = dirs::WS.store.join(parent);

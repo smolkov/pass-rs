@@ -9,12 +9,15 @@ use crate::key::PrivateKey;
 /// Initialize new password storage and use gpg-id for encryption.
 
 
+#[derive(Debug,Parser)]
+struct KeyGenerate {
+    /// Key len
+    len: Option<u32>,
+}
+
 #[derive(Debug,Subcommand)]
 enum  KeyCommand {
-    Generate{
-        /// Password length
-        len: Option<u32>,
-    },
+    Generate(KeyGenerate),
 }
 
 #[derive(Debug, Parser)]
@@ -26,19 +29,21 @@ pub struct Cli {
 
 impl Cli {
     pub fn run(&self,store:&Store) -> Result<()> {
-        match self.command {
-           KeyCommand::Generate{len} => generate(store,len)?
+        match &self.command {
+           KeyCommand::Generate(gen) => gen.generate(store)?
         } 
         Ok(())
     }
 }
 
 
-fn generate(store:&Store,len : Option<u32>) -> Result<()> {
-    let len = len.unwrap_or(4094);
-    let privat_key = PrivateKey::generate_rsa(len)?;
-    store.update_keys(&privat_key)?;
-    println!("{}",privat_key.private_pem()?);
-    println!("{}",privat_key.public_pem()?);
-    Ok(())
+impl KeyGenerate {
+    fn generate(&self, store: &Store) -> Result<()> {
+        let len = self.len.unwrap_or(4094);
+        let private_key = PrivateKey::generate_rsa(len)?;
+        store.update_keys(&private_key)?;
+        println!("{}",private_key.private_pem()?);
+        println!("{}",private_key.public_pem()?);
+        Ok(())
+    }
 }
