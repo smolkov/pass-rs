@@ -75,12 +75,12 @@ mod test {
 
     #[test]
     fn test_preparations() {
-        const test_symbols:&str = "`~,.?/\\[]{}|-_=+()@#$%^&*:;'\"<>";
+        const TEST_SYMBOLS:&str = "`~,.?/\\[]{}|-_=+()@#$%^&*:;'\"<>";
         for pass in PasswordGenerator::new(20).witch_no_symbol(true).take(4) {
             println!("{}",pass);
         }
         PasswordGenerator::new(20).take(4).for_each(|p| println!("{}",p));
-        PasswordGenerator::new(20).take(4).for_each(|p| println!("{}",p.chars().filter(|ch| test_symbols.find(*ch).is_some()).fold(0, |acc, _| acc + 1)));
+        PasswordGenerator::new(20).take(4).for_each(|p| println!("{}",p.chars().filter(|ch| TEST_SYMBOLS.find(*ch).is_some()).fold(0, |acc, _| acc + 1)));
 
         // let password = Password::new(10);
         // password.into_iter().take(2).for_each(|p| println!("{}",p));

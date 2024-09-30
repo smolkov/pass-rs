@@ -34,6 +34,9 @@ impl Cli {
         let path = store.password(&self.pass_name);
         let key = store.private_key()?;
         let term = Term::stdout(); 
+        if path.is_dir() {
+            return Err(anyhow::anyhow!("Path {} is already exist as a directory",path.display()))
+        }
         if path.exists() && ! self.force {
             write!(&term,"An entry already exists for {}. Overwrite it? {} ",style(self.pass_name.display()).cyan().bold(),style("[y/N]").red().bold())?;
             let user_input = term.read_line()?;

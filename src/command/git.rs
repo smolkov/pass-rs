@@ -10,7 +10,7 @@ enum  Cmd {
    },
    Push,
    Commit{
-    message:String,
+    message:Vec<String>,
    },
 }
 
@@ -36,8 +36,9 @@ fn change_remote(store:&Store, remote_url: &str) -> Result<()> {
     Ok(())
 }
 
-fn commit_all(store:&Store, message: &str) -> Result<()> {
-    store.git()?.commit(message)?;
+fn commit_all(store:&Store, message: &Vec<String>) -> Result<()> {
+    let message = message.join(" ");
+    store.git()?.commit(&message)?;
     Ok(())
 }
 

@@ -7,7 +7,7 @@ use walkdir::WalkDir;
 use crate::config::Config;
 use crate::dirs::WS;
 use crate::git::Git;
-use crate::key::{PrivateKey, PublicKey};
+use crate::key::{PrivateKey};
 
 static PRIVATE_KEY_FILE: &str = ".key";
 static PUBLIC_KEY_FILE: &str = ".key.pub";
@@ -35,11 +35,6 @@ impl Store {
     pub fn private_key(&self) -> Result<PrivateKey> {
         let key =
             PrivateKey::from_pem(fs::read_to_string(self.path.join(PRIVATE_KEY_FILE))?.as_bytes())?;
-        Ok(key)
-    }
-    pub fn public_key(&self) -> Result<PublicKey> {
-        let key =
-            PublicKey::from_pem(fs::read_to_string(self.path.join(PUBLIC_KEY_FILE))?.as_bytes())?;
         Ok(key)
     }
     pub fn password(&self, path: &Path) -> PathBuf {
